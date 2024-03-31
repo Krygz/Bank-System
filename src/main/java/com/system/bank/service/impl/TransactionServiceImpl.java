@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -43,7 +45,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
     private Long performDeposit(Account account ,double amount){
         updateAccountBalance(account,amount);
-        Transaction transaction = transactionRepository.save(new Transaction(amount,account, TransactionType.DEPOSIT));
+        Transaction transaction = toEntity(amount,account,TransactionType.DEPOSIT);
+        transactionRepository.save(transaction);
         return transaction.getId();
     }
     private Long performWithdraw(Account account,double amount){
@@ -51,11 +54,21 @@ public class TransactionServiceImpl implements TransactionService {
             throw new RuntimeException("Your Balance " + account.getBalance() + " is not enough to withdraw " + amount);
         }
         updateAccountBalance(account,-amount);
-        Transaction transaction = transactionRepository.save(new Transaction(amount,account,TransactionType.WITHDRAW));
+        Transaction transaction = toEntity(amount,account,TransactionType.WITHDRAW);
+        transactionRepository.save(transaction);
         return transaction.getId();
     }
     private void updateAccountBalance(Account account,double amount){
         account.setBalance(account.getBalance() + amount);
         accountRepository.save(account);
+    }
+    public Transaction toEntity(double amount , Account account, TransactionType type){
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setAccount(account);
+        transaction.setType(type);
+        transaction.setTimestamp(new Date());
+        transaction.setNotes("Account Balance" + account.getBalance());
+        return transaction;
     }
 }

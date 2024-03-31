@@ -20,7 +20,6 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-
     @PostMapping("/deposit")
     public ResponseEntity<ResponseModel>deposit(@Valid @RequestBody DepositRequestModel request){
         return ResponseEntity.ok(
