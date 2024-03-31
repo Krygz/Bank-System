@@ -24,4 +24,10 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "account_id" , referencedColumnName = "id")
     private Account account;
+
+    public Transaction(double amount, Account account, TransactionType transactionType) {
+        this.amount = amount;
+        this.account = account;
+        this.type = transactionType;
+    }
 }
