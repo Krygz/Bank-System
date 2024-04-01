@@ -3,6 +3,7 @@ package com.system.bank.service.impl;
 import com.system.bank.entity.Account;
 import com.system.bank.entity.Transaction;
 import com.system.bank.entity.TransactionType;
+import com.system.bank.exceptions.LowBalanceException;
 import com.system.bank.model.transaction.DepositRequestModel;
 import com.system.bank.model.transaction.TransactionResponseModel;
 import com.system.bank.model.transaction.WithdrawRequestModel;
@@ -51,7 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
     private Long performWithdraw(Account account,double amount){
         if(account.getBalance() < amount){
-            throw new RuntimeException("Your Balance " + account.getBalance() + " is not enough to withdraw " + amount);
+            throw new LowBalanceException("Your Balance " + account.getBalance() + " is not enough to withdraw " + amount);
         }
         updateAccountBalance(account,-amount);
         Transaction transaction = toEntity(amount,account,TransactionType.WITHDRAW);
@@ -68,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setAccount(account);
         transaction.setType(type);
         transaction.setTimestamp(new Date());
-        transaction.setNotes("Account Balance" + account.getBalance());
+        transaction.setNotes("Account Balance :R$" + account.getBalance());
         return transaction;
     }
 }
